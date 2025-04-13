@@ -12,8 +12,6 @@ const fromCurrency = ref("RUB");
 const toCurrency = ref("USD");
 const fromAmount = ref(1000);
 const toAmount = ref(0);
-const isFromAmountUpdating = ref(false);
-const isToAmountUpdating = ref(false);
 
 // Загружаем курсы при монтировании компонента
 onMounted(async () => {
@@ -44,31 +42,14 @@ const getExchangeRate = (from: string, to: string) => {
 
 // Функция обновления суммы в целевом поле
 const updateToAmount = () => {
-  if (isToAmountUpdating.value) return;
-
-  isToAmountUpdating.value = true;
   const rate = getExchangeRate(fromCurrency.value, toCurrency.value);
   toAmount.value = Number((fromAmount.value * rate).toFixed(2));
-  isToAmountUpdating.value = false;
 };
 
 // Функция обновления суммы в исходном поле
 const updateFromAmount = () => {
-  if (isFromAmountUpdating.value) return;
-
-  isFromAmountUpdating.value = true;
   const rate = getExchangeRate(toCurrency.value, fromCurrency.value);
   fromAmount.value = Number((toAmount.value * rate).toFixed(2));
-  isFromAmountUpdating.value = false;
-};
-
-// Обработчики событий для полей ввода
-const handleFromAmountChange = () => {
-  updateToAmount();
-};
-
-const handleToAmountChange = () => {
-  updateFromAmount();
 };
 
 // Следим за изменениями валют
@@ -77,13 +58,10 @@ watch([fromCurrency, toCurrency], () => {
 });
 
 // Следим за изменениями базовой валюты в хранилище
-watch(
-  () => store.baseCurrency,
-  async () => {
-    await store.fetchRates();
-    updateToAmount();
-  }
-);
+watch(() => store.baseCurrency, async () => {
+	await store.fetchRates();
+	updateToAmount();
+});
 </script>
 
 <template>
@@ -113,7 +91,7 @@ watch(
             id="from-amount"
             type="number"
             v-model="fromAmount"
-            @input="handleFromAmountChange"
+            @input="updateToAmount"
             class="form-control"
             min="0"
             step="0.01"
@@ -137,7 +115,7 @@ watch(
             id="to-amount"
             type="number"
             v-model="toAmount"
-            @input="handleToAmountChange"
+            @input="updateFromAmount"
             class="form-control"
             min="0"
             step="0.01"
