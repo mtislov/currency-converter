@@ -23,7 +23,7 @@ onMounted(() => {
       <div v-for="rate in store.formattedRates" :key="rate.code" class="rate-item">
         <span class="currency-code">1 {{ rate.code }}</span>
         <span class="equals">=</span>
-        <span class="rate-value">{{ rate.rate.toFixed(3) }} {{ store.baseCurrency }}</span>
+        <span class="rate-value">{{ rate.rate.toFixed(2) }} {{ store.baseCurrency }}</span>
       </div>
     </div>
   </div>
