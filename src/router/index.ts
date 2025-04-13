@@ -3,7 +3,7 @@ import Home from "../views/Home.vue";
 import Convert from "../views/Convert.vue";
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory("currency-converter"),
   routes: [
     {
       path: "/",
